@@ -52,6 +52,9 @@ public class PessoaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Pessoa> update(@PathVariable Long id, @RequestBody Pessoa pessoaEdited) {
+
+        CPFValidation.validaCpf(pessoaEdited.getCpf());
+
         return pessoaService.findById(id)
                 .map(pessoa -> {
                     pessoa.setNome(pessoaEdited.getNome());
