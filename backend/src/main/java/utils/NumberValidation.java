@@ -6,7 +6,9 @@ public class NumberValidation {
 
     public static void validateInteger(String numero) {
         try {
-            Integer.parseInt(numero);
+            if (!numero.isEmpty()) {
+                Integer.parseInt(numero);
+            }
         } catch (NumberFormatException e) {
             throw new ValidationException("Número Inválido");
         }
