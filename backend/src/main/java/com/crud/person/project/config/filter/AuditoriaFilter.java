@@ -1,4 +1,4 @@
-package com.crud.person.project.config;
+package com.crud.person.project.config.filter;
 
 import com.crud.person.project.model.Auditoria;
 import com.crud.person.project.repository.AuditoriaRepository;

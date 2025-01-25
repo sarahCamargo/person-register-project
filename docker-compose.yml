@@ -1,0 +1,46 @@
+version: '1'
+
+services:
+  backend:
+    image: scdecamargo/person-register-project:backend
+    container_name: backend
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/persondb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=admin
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - person-network
+
+  frontend:
+    image: scdecamargo/person-register-project:frontend
+    container_name: frontend
+    ports:
+      - "80:80"
+    networks:
+      - person-network
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_DB: persondb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - person-network
+
+networks:
+  person-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+    driver: local

@@ -1,0 +1,21 @@
+# Ignorar arquivos do Maven
+target/
+*.log
+*.class
+
+# Ignorar arquivos de configuração do sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar arquivos de dependências locais ou outros gerados
+.idea/
+.vscode/
+
+# Ignorar diretórios do Git
+.git/
+.gitignore
+
+# Ignorar arquivos de compilação do IntelliJ ou Eclipse
+*.iml
+*.ipr
+*.iws
