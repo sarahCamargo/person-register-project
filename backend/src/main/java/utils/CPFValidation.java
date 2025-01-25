@@ -2,7 +2,7 @@ package utils;
 
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
-import com.crud.person.project.exception.CpfNotValidException;
+import com.crud.person.project.exception.ValidationException;
 
 public class CPFValidation {
 
@@ -11,7 +11,7 @@ public class CPFValidation {
         try {
             cpfValidator.assertValid(cpf);
         } catch (InvalidStateException e) {
-            throw new CpfNotValidException("CPF Inválido.");
+            throw new ValidationException("CPF Inválido.");
         }
     }
 }

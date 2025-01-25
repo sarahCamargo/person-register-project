@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import utils.CPFValidation;
+import utils.NumberValidation;
 
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class PessoaController {
     public Pessoa save(@RequestBody Pessoa pessoa) {
 
         CPFValidation.validaCpf(pessoa.getCpf());
+        NumberValidation.validateInteger(pessoa.getNumero());
 
         if (pessoaService.findByCpf(pessoa.getCpf()).isPresent()) {
            throw new CpfAlreadyRegisteredException("CPF já cadastrado no sistema.");
@@ -54,6 +56,7 @@ public class PessoaController {
     public ResponseEntity<Pessoa> update(@PathVariable Long id, @RequestBody Pessoa pessoaEdited) {
 
         CPFValidation.validaCpf(pessoaEdited.getCpf());
+        NumberValidation.validateInteger(pessoaEdited.getNumero());
 
         return pessoaService.findById(id)
                 .map(pessoa -> {

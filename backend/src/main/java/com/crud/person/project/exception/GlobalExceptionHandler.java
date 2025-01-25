@@ -22,8 +22,8 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
-    @ExceptionHandler(CpfNotValidException.class)
-    public ResponseEntity<String> handleBusinessException(CpfNotValidException ex) {
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<String> handleBusinessException(ValidationException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());
