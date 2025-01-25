@@ -49,17 +49,18 @@ public class PessoaController {
     @PutMapping("/{id}")
     public ResponseEntity<Pessoa> update(@PathVariable Long id, @RequestBody Pessoa pessoaEdited) {
         return pessoaService.findById(id)
-                .map(person -> {
-                    person.setNome(pessoaEdited.getNome());
-                    person.setTelefone(pessoaEdited.getTelefone());
-                    person.setCpf(pessoaEdited.getCpf());
-                    person.setCep(pessoaEdited.getCep());
-                    person.setBairro(pessoaEdited.getBairro());
-                    person.setMunicipio(pessoaEdited.getMunicipio());
-                    person.setEstado(pessoaEdited.getEstado());
-                    person.setNumero(pessoaEdited.getNumero());
-                    person.setComplemento(pessoaEdited.getComplemento());
-                    return ResponseEntity.ok(pessoaService.save(person));
+                .map(pessoa -> {
+                    pessoa.setNome(pessoaEdited.getNome());
+                    pessoa.setTelefone(pessoaEdited.getTelefone());
+                    pessoa.setCpf(pessoaEdited.getCpf());
+                    pessoa.setCep(pessoaEdited.getCep());
+                    pessoa.setLogradouro(pessoaEdited.getLogradouro());
+                    pessoa.setBairro(pessoaEdited.getBairro());
+                    pessoa.setMunicipio(pessoaEdited.getMunicipio());
+                    pessoa.setEstado(pessoaEdited.getEstado());
+                    pessoa.setNumero(pessoaEdited.getNumero());
+                    pessoa.setComplemento(pessoaEdited.getComplemento());
+                    return ResponseEntity.ok(pessoaService.save(pessoa));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }

@@ -22,6 +22,9 @@ public class Pessoa {
     @Column(nullable = false, length = 10)
     private String cep;
 
+    @Column()
+    private String logradouro;
+
     @Column(length = 100)
     private String bairro;
 
@@ -34,7 +37,7 @@ public class Pessoa {
     @Column(length = 10)
     private String numero;
 
-    @Column(length = 255)
+    @Column()
     private String complemento;
 
     public Long getId() {
@@ -75,6 +78,14 @@ public class Pessoa {
 
     public void setCep(String cep) {
         this.cep = cep;
+    }
+
+    public String getLogradouro() {
+        return logradouro;
+    }
+
+    public void setLogradouro(String logradouro) {
+        this.logradouro = logradouro;
     }
 
     public String getBairro() {

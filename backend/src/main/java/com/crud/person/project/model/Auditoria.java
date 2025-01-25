@@ -12,10 +12,16 @@ public class Auditoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column()
     private final LocalDateTime timestamp = LocalDateTime.now();
+
+    @Column(length = 10)
     private String metodo;
+
+    @Column()
     private String endpoint;
 
+    @Column()
     private int status;
 
     public Long getId() {
