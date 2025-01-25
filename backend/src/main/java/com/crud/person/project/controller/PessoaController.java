@@ -1,5 +1,6 @@
 package com.crud.person.project.controller;
 
+import br.com.caelum.stella.validation.CPFValidator;
 import com.crud.person.project.exception.CpfAlreadyRegisteredException;
 import com.crud.person.project.model.Pessoa;
 import com.crud.person.project.service.CSVService;
@@ -8,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import utils.CPFValidation;
 
 import java.util.List;
 
@@ -38,6 +40,8 @@ public class PessoaController {
 
     @PostMapping("/")
     public Pessoa save(@RequestBody Pessoa pessoa) {
+
+        CPFValidation.validaCpf(pessoa.getCpf());
 
         if (pessoaService.findByCpf(pessoa.getCpf()).isPresent()) {
            throw new CpfAlreadyRegisteredException("CPF já cadastrado no sistema.");
