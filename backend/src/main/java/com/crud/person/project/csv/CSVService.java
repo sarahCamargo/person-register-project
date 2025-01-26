@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static com.crud.person.project.exception.GenerateCSVException.ERROR_CREATING_DIRECTORY_MESSAGE;
@@ -46,10 +48,13 @@ public class CSVService {
     }
 
     public void saveCSVToFile(List<Pessoa> pessoas) {
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
         String directory = csvConfig.getDirectory();
         String filename = csvConfig.getFilename();
 
-        Path path = Path.of(directory, filename);
+        String fileNameTimestamp = filename.replace(".csv", "_" + timestamp + ".csv");
+
+        Path path = Path.of(directory, fileNameTimestamp);
 
         try {
             Files.createDirectories(path.getParent());
