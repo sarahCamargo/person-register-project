@@ -1,4 +1,4 @@
-package utils;
+package com.crud.person.project.utils;
 
 import com.crud.person.project.exception.ValidationException;
 

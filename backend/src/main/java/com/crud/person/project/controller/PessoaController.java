@@ -5,8 +5,8 @@ import com.crud.person.project.model.Pessoa;
 import com.crud.person.project.service.PessoaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import utils.CPFValidation;
-import utils.NumberValidation;
+import com.crud.person.project.utils.CPFValidation;
+import com.crud.person.project.utils.NumberValidation;
 
 import java.util.List;
 

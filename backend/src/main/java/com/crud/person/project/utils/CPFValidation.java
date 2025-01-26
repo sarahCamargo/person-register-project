@@ -1,4 +1,4 @@
-package utils;
+package com.crud.person.project.utils;
 
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;

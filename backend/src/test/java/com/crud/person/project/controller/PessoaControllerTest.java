@@ -3,7 +3,6 @@ package com.crud.person.project.controller;
 import com.crud.person.project.exception.CpfAlreadyRegisteredException;
 import com.crud.person.project.exception.ValidationException;
 import com.crud.person.project.model.Pessoa;
-import com.crud.person.project.csv.CSVService;
 import com.crud.person.project.service.PessoaService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,8 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import utils.CPFValidation;
-import utils.NumberValidation;
+import com.crud.person.project.utils.CPFValidation;
+import com.crud.person.project.utils.NumberValidation;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,9 +30,6 @@ public class PessoaControllerTest {
 
     @Mock
     private PessoaService pessoaService;
-
-    @Mock
-    private CSVService csvService;
 
     @InjectMocks
     private PessoaController pessoaController;
