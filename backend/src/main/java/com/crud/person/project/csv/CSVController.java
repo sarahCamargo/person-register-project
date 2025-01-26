@@ -21,14 +21,24 @@ public class CSVController {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    public static final String RESPONSE_MESSAGE = "Arquivo CSV sendo gerado em output/person-register.csv";
+    private final CSVConfig csvConfig;
+
+    public static final String RESPONSE_MESSAGE = "Arquivo CSV sendo gerado em: ";
+
+    @Autowired
+    public CSVController(CSVConfig csvConfig) {
+        this.csvConfig = csvConfig;
+    }
 
     @GetMapping("/download")
     public void getCSV(HttpServletResponse response) {
         rabbitTemplate.convertAndSend(RabbitConfig.CSV_QUEUE, "Gerar CSV");
         response.setContentType("text/plain");
         try {
-            response.getWriter().write(RESPONSE_MESSAGE);
+            String responseMessage = RESPONSE_MESSAGE + csvConfig.getDirectory() +
+                    "/" +
+                    csvConfig.getFilename();
+            response.getWriter().write(responseMessage);
         } catch (IOException e) {
             throw new GenerateCSVException(GENERATE_RESPONSE_ERROR_MESSAGE);
         }

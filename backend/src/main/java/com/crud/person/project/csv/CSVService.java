@@ -2,18 +2,28 @@ package com.crud.person.project.csv;
 
 import com.crud.person.project.exception.GenerateCSVException;
 import com.crud.person.project.model.Pessoa;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
+import static com.crud.person.project.exception.GenerateCSVException.ERROR_CREATING_DIRECTORY_MESSAGE;
+import static com.crud.person.project.exception.GenerateCSVException.ERROR_SAVING_CSV_FILE_MESSAGE;
+
 @Service
 public class CSVService {
+
+    private final CSVConfig csvConfig;
+
+    @Autowired
+    public CSVService(CSVConfig csvConfig) {
+        this.csvConfig = csvConfig;
+    }
 
     public String getCSV(List<Pessoa> pessoas) {
         StringBuilder csvContent = new StringBuilder();
@@ -36,21 +46,21 @@ public class CSVService {
     }
 
     public void saveCSVToFile(List<Pessoa> pessoas) {
-        String filePath = "output/person-report.csv";
+        String directory = csvConfig.getDirectory();
+        String filename = csvConfig.getFilename();
 
-        File outputDir = new File("output");
-        if (!outputDir.exists()) {
-            if (!outputDir.mkdirs()) {
-                throw new GenerateCSVException("Erro ao gerar diretório para salvar arquivo CSV");
-            }
+        Path path = Path.of(directory, filename);
+
+        try {
+            Files.createDirectories(path.getParent());
+        } catch (IOException e) {
+            throw new GenerateCSVException(ERROR_CREATING_DIRECTORY_MESSAGE);
         }
-
-        Path path = Path.of(filePath);
 
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             writer.write(getCSV(pessoas));
         } catch (IOException e) {
-            throw new GenerateCSVException("Erro ao salvar o arquivo CSV");
+            throw new GenerateCSVException(ERROR_SAVING_CSV_FILE_MESSAGE);
         }
     }
 }
