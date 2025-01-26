@@ -1,4 +1,4 @@
-import { Button, Container, Table, TableCell, TablePagination, Grid2, Box } from '@mui/material';
+import { Button, Container, Table, TableCell, TablePagination, Grid2, Box, Typography } from '@mui/material';
 import styled from 'styled-components';
 
 export const StyledContainer = styled(Container)`
@@ -76,11 +76,18 @@ export const StyledTablePagination = styled(TablePagination)`
   }
 `;
 
-
 export const StyledBox = styled(Box)`
   @media (min-width: 600px) {
     overflow-x: auto;
     max-width: 100%;
     margin-bottom: 20px;
   }
+`;
+
+export const StyledTypographyTitle = styled(Typography)`
+  margin-bottom: 30px !important;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  color: #2196f3;
 `;

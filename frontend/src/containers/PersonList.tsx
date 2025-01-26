@@ -17,8 +17,9 @@ import {
   StyledTableCell,
   StyledTablePagination,
   StyledBox,
+  StyledTypographyTitle,
 } from '../styles/PersonList.styles'
-import { Grid2, IconButton } from '@mui/material';
+import { Grid2, IconButton, Tooltip, Typography } from '@mui/material';
 import { gerarCSV } from '../services/CSVService';
 import { toast } from 'react-toastify';
 
@@ -39,7 +40,7 @@ const PeopleList: React.FC = () => {
   }, []);
 
   const handleAdicionarPessoa = async (pessoa: Pessoa) => {
-    setPersonToEdit(undefined); 
+    setPersonToEdit(undefined);
     const novaPessoa = await adicionarPessoa(pessoa);
     setPessoas((prevPessoas) => [...prevPessoas, novaPessoa]);
     setIsModalOpen(false);
@@ -89,6 +90,10 @@ const PeopleList: React.FC = () => {
 
   return (
     <StyledContainer>
+      <StyledTypographyTitle variant="h4">
+        Registro de Pessoas
+      </StyledTypographyTitle>
+
       <ButtonGrid container spacing={2} justifyContent="flex-start" alignItems="center">
         <Grid2>
           <StyledButton variant="outlined" color="primary" onClick={() => setIsModalOpen(true)}>
@@ -143,19 +148,23 @@ const PeopleList: React.FC = () => {
                 <StyledTableCell>{person.numero}</StyledTableCell>
                 <StyledTableCell>{person.complemento}</StyledTableCell>
                 <StyledTableCell>
-                  <IconButton
-                    color="secondary"
-                    sx={{ marginRight: '10px' }}
-                    onClick={() => handleOpenEditModal(person)}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    color="error"
-                    onClick={() => handleDeletePessoa(person.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <Tooltip title="Editar">
+                    <IconButton
+                      color="secondary"
+                      sx={{ marginRight: '10px' }}
+                      onClick={() => handleOpenEditModal(person)}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Remover">
+                    <IconButton
+                      color="error"
+                      onClick={() => handleDeletePessoa(person.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Tooltip>
                 </StyledTableCell>
               </tr>
             ))}
