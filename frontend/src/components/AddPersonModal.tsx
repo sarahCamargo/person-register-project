@@ -69,36 +69,24 @@ const AddPersonModal: React.FC<AddPersonModalProps> = ({
     }
   }, [personToEdit]);
 
-  useEffect(() => {
-    if (!personToEdit) {
-      setNome('');
-      setTelefone('');
-      setCpf('');
-      setCep('');
-      setLogradouro('');
-      setMunicipio('');
-      setEstado('');
-      setBairro('');
-      setNumero('');
-      setComplemento('');
-    }
-  }, [personToEdit]);
-  
-  
+  const handleClose = () => {
+    setNome('');
+    setTelefone('');
+    setCpf('');
+    setCep('');
+    setLogradouro('');
+    setMunicipio('');
+    setEstado('');
+    setBairro('');
+    setNumero('');
+    setComplemento('');
+    onClose();
+  };
+
 
   const handleSave = async () => {
-    let valid = true;
-    const erros = {
-      nome: !nome,
-      cpf: !cpf,
-    };
 
-    if (erros.nome || erros.cpf) {
-      setErros(erros);
-      valid = false;
-    }
-
-    if (!valid) return;
+    if (!isFieldsValid(nome, cpf)) return;
 
     const newPerson: Pessoa = {
       id: personToEdit ? personToEdit.id : '',
@@ -125,13 +113,28 @@ const AddPersonModal: React.FC<AddPersonModalProps> = ({
         alert('Pessoa adicionada com sucesso!');
       }
       refreshList();
-      onClose();
+      handleClose();
     } catch (error: any) {
       alert(error.response.data);
     } finally {
       setIsLoading(false);
     }
   };
+
+  const isFieldsValid = (nome: string, cpf: string): boolean => {
+    let valid = true;
+    const erros = {
+      nome: !nome,
+      cpf: !cpf,
+    };
+
+    if (erros.nome || erros.cpf) {
+      setErros(erros);
+      valid = false;
+    }
+
+    return valid;
+  }
 
   const obterEndereco = async (cep: string) => {
     if (cep.length === 8) {
@@ -151,7 +154,7 @@ const AddPersonModal: React.FC<AddPersonModalProps> = ({
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={handleClose}>
       <StyledBox>
         <Header>
           <Typography variant="h6" gutterBottom>
