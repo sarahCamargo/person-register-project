@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.crud.person.project.exception.GenerateCSVException.NO_PERSON_REGISTERED_MESSAGE;
+
 @Component
 public class CSVConsumer {
 
@@ -24,7 +26,7 @@ public class CSVConsumer {
         List<Pessoa> pessoas = pessoaService.findAll();
 
         if (pessoas.isEmpty()) {
-            throw new GenerateCSVException("Não há pessoas cadastradas no sistema.");
+            throw new GenerateCSVException(NO_PERSON_REGISTERED_MESSAGE);
         }
 
         csvService.saveCSVToFile(pessoas);

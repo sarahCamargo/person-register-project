@@ -2,7 +2,6 @@ package com.crud.person.project.csv;
 
 import com.crud.person.project.exception.GenerateCSVException;
 import com.crud.person.project.model.Pessoa;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;

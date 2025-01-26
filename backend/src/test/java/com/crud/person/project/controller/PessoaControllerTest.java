@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.crud.person.project.exception.CpfAlreadyRegisteredException.CPF_ALREADY_REGISTERED_MESSAGE;
+import static com.crud.person.project.exception.ValidationException.CPF_INVALID_MESSAGE;
+import static com.crud.person.project.exception.ValidationException.NUMBER_INVALID_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -63,7 +66,7 @@ public class PessoaControllerTest {
                 () -> pessoaController.save(pessoa)
         );
 
-        assertEquals("CPF já cadastrado no sistema.", exception.getMessage());
+        assertEquals(CPF_ALREADY_REGISTERED_MESSAGE, exception.getMessage());
         verify(pessoaService, never()).save(any(Pessoa.class));
     }
 
@@ -198,8 +201,12 @@ public class PessoaControllerTest {
 
     @Test
     void saveCpfNotValid() {
-        String cpfInvalido = "123123";
-        assertThrows(ValidationException.class, () -> CPFValidation.validaCpf(cpfInvalido));
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> CPFValidation.validaCpf("123123")
+        );
+
+        assertEquals(CPF_INVALID_MESSAGE, exception.getMessage());
     }
 
     @Test
@@ -211,7 +218,12 @@ public class PessoaControllerTest {
 
     @Test
     void saveNumberNotValid() {
-        assertThrows(ValidationException.class, () -> NumberValidation.validateInteger("teste"));
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> NumberValidation.validateInteger("teste")
+        );
+
+        assertEquals(NUMBER_INVALID_MESSAGE, exception.getMessage());
     }
 
 }

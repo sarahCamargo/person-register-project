@@ -39,7 +39,7 @@ public class PessoaController {
         NumberValidation.validateInteger(pessoa.getNumero());
 
         if (pessoaService.findByCpf(pessoa.getCpf()).isPresent()) {
-           throw new CpfAlreadyRegisteredException("CPF já cadastrado no sistema.");
+           throw new CpfAlreadyRegisteredException();
         };
 
         return pessoaService.save(pessoa);

@@ -11,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static com.crud.person.project.exception.GenerateCSVException.NO_PERSON_REGISTERED_MESSAGE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -47,7 +49,12 @@ public class CSVConsumerTest {
 
         when(pessoaService.findAll()).thenReturn(List.of());
 
-        assertThrows(GenerateCSVException.class, () -> csvConsumer.processCSVRequest("Gerar CSV"));
+        GenerateCSVException exception = assertThrows(
+                GenerateCSVException.class,
+                () -> csvConsumer.processCSVRequest("Gerar CSV")
+        );
+
+        assertEquals(NO_PERSON_REGISTERED_MESSAGE, exception.getMessage());
 
         verify(pessoaService, times(1)).findAll();
         verify(csvService, never()).saveCSVToFile(any());

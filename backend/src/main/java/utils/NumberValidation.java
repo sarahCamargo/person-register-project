@@ -2,6 +2,8 @@ package utils;
 
 import com.crud.person.project.exception.ValidationException;
 
+import static com.crud.person.project.exception.ValidationException.NUMBER_INVALID_MESSAGE;
+
 public class NumberValidation {
 
     public static void validateInteger(String numero) {
@@ -10,7 +12,7 @@ public class NumberValidation {
                 Integer.parseInt(numero);
             }
         } catch (NumberFormatException e) {
-            throw new ValidationException("Número Inválido");
+            throw new ValidationException(NUMBER_INVALID_MESSAGE);
         }
     }
 }
