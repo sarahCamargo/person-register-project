@@ -50,28 +50,3 @@ export const removerPessoa = async (id: string) => {
         throw error;
     }
 };
-
-export const gerarCSV = async () => {
-    try {
-        const response = await api.get('/csv/download', {
-            responseType: 'blob',
-        });
-
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'person-report.csv');
-        document.body.appendChild(link);
-        link.click();
-
-        link.parentNode?.removeChild(link);
-    } catch (error: any) {
-        if (error.response && error.response.data) {
-            alert(error.response.data);
-            throw error;
-        } else {
-            console.error('Erro ao gerar CSV: ', error);
-            throw error;
-        }
-    }
-}

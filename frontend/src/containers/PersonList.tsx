@@ -8,7 +8,6 @@ import {
   listarPessoas,
   editarPessoa,
   removerPessoa,
-  gerarCSV,
 } from '../services/PersonService';
 import {
   StyledContainer,
@@ -20,6 +19,7 @@ import {
   StyledBox,
 } from '../styles/PersonList.styles'
 import { Grid2, IconButton } from '@mui/material';
+import { gerarCSV } from '../services/CSVService';
 
 const PeopleList: React.FC = () => {
   const [pessoas, setPessoas] = useState<Pessoa[]>([]);

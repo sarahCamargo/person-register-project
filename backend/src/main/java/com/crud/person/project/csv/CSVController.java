@@ -21,7 +21,7 @@ public class CSVController {
         rabbitTemplate.convertAndSend(RabbitConfig.CSV_QUEUE, "Gerar CSV");
         response.setContentType("text/plain");
         try {
-            response.getWriter().write("Mensagem enviada para gerar o CSV!");
+            response.getWriter().write("Arquivo CSV sendo gerado em output/person-register.csv");
         } catch (Exception e) {
             throw new RuntimeException("Erro ao escrever a resposta", e);
         }
