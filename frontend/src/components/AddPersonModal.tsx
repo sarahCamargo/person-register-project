@@ -4,6 +4,7 @@ import { Pessoa } from '../types/Pessoa';
 import { adicionarPessoa, editarPessoa } from '../services/PersonService';
 import { consultaCep } from '../services/CepService';
 import { Content, Footer, Header, StyledBox, StyledButton, StyledGrid } from '../styles/AddPersonModal.styles';
+import { toast } from 'react-toastify';
 
 interface AddPersonModalProps {
   refreshList: () => void;
@@ -107,15 +108,15 @@ const AddPersonModal: React.FC<AddPersonModalProps> = ({
     try {
       if (personToEdit) {
         await editarPessoa(newPerson);
-        alert('Pessoa editada com sucesso!');
+        toast.success('Pessoa editada com sucesso!');
       } else {
         await adicionarPessoa(newPerson);
-        alert('Pessoa adicionada com sucesso!');
+        toast.success('Pessoa adicionada com sucesso!');
       }
       refreshList();
       handleClose();
     } catch (error: any) {
-      alert(error.response.data);
+      toast.error(error.response.data);
     } finally {
       setIsLoading(false);
     }
@@ -141,11 +142,13 @@ const AddPersonModal: React.FC<AddPersonModalProps> = ({
       setIsLoading(true);
       try {
         await consultaCep(cep).then(response => {
-          const endereco = response.data;
-          setMunicipio(endereco.localidade);
-          setEstado(endereco.uf);
-          setLogradouro(endereco.logradouro);
-          setBairro(endereco.bairro);
+          if (response && response.data) {
+            const endereco = response.data;
+            setMunicipio(endereco.localidade);
+            setEstado(endereco.uf);
+            setLogradouro(endereco.logradouro);
+            setBairro(endereco.bairro);
+          }
         });
       } finally {
         setIsLoading(false);

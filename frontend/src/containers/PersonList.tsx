@@ -20,6 +20,7 @@ import {
 } from '../styles/PersonList.styles'
 import { Grid2, IconButton } from '@mui/material';
 import { gerarCSV } from '../services/CSVService';
+import { toast } from 'react-toastify';
 
 const PeopleList: React.FC = () => {
   const [pessoas, setPessoas] = useState<Pessoa[]>([]);
@@ -55,7 +56,7 @@ const PeopleList: React.FC = () => {
   const handleDeletePessoa = async (id: string) => {
     await removerPessoa(id);
     setPessoas((old) => old.filter((pessoa) => pessoa.id !== id));
-    alert('Pessoa removida com sucesso!');
+    toast.success('Pessoa removida com sucesso!');
   };
 
   const handleOpenEditModal = (pessoa: Pessoa) => {

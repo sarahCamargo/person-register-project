@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const api = axios.create({
     baseURL: 'http://localhost:8080/api/pessoa'
@@ -8,9 +9,8 @@ export const listarPessoas = async () => {
     try {
         const response = await api.get('/');
         return response.data;
-    } catch (error) {
-        console.error('Erro ao listar pessoas:', error);
-        throw error;
+    } catch (error: any) {
+        toast.error('Erro ao listar pessoas', error);
     }
 };
 
@@ -22,8 +22,7 @@ export const adicionarPessoa = async (pessoa: any) => {
         if (error.response && error.response.data) {
             throw error;
         } else {
-            console.error('Erro ao adicionar pessoa:', error);
-            throw error;
+            toast.error('Erro ao adicionar pessoa:', error);
         }
     }
 };
@@ -36,8 +35,7 @@ export const editarPessoa = async (pessoa: any) => {
         if (error.response && error.response.data) {
             throw error;
         } else {
-            console.error('Erro ao editar pessoa:', error);
-            throw error;
+            toast.error('Erro ao editar pessoa:', error);
         }
     }
 };
@@ -45,8 +43,7 @@ export const editarPessoa = async (pessoa: any) => {
 export const removerPessoa = async (id: string) => {
     try {
         await api.delete(`/${id}`);
-    } catch (error) {
-        console.error('Erro ao remover pessoa:', error);
-        throw error;
+    } catch (error: any) {
+        throw error('Erro ao remover pessoa:', error);
     }
 };
