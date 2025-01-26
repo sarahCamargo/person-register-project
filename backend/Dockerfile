@@ -6,9 +6,9 @@ COPY pom.xml .
 
 RUN mvn dependency:go-offline -B
 
-COPY src /app/src
+COPY ./backend /app
 
-RUN mvn clean package -DskipTests
+RUN ./mvnw clean install
 
 FROM openjdk:17-slim
 

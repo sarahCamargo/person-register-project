@@ -1,12 +1,8 @@
 package com.crud.person.project.controller;
 
-import br.com.caelum.stella.validation.CPFValidator;
 import com.crud.person.project.exception.CpfAlreadyRegisteredException;
 import com.crud.person.project.model.Pessoa;
-import com.crud.person.project.service.CSVService;
 import com.crud.person.project.service.PessoaService;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import utils.CPFValidation;
@@ -19,9 +15,6 @@ import java.util.List;
 public class PessoaController {
 
     private final PessoaService pessoaService;
-
-    @Autowired
-    private CSVService csvService;
 
     public PessoaController(PessoaService pessoaService) {
         this.pessoaService = pessoaService;
@@ -82,11 +75,5 @@ public class PessoaController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
-    }
-
-    @GetMapping("/csv/download")
-    public void getCSV(HttpServletResponse response) {
-        List<Pessoa> pessoas = pessoaService.findAll();
-        csvService.getCSV(response, pessoas);
     }
 }

@@ -1,19 +1,19 @@
 package com.crud.person.project.controller;
 
 import com.crud.person.project.exception.CpfAlreadyRegisteredException;
+import com.crud.person.project.exception.ValidationException;
 import com.crud.person.project.model.Pessoa;
-import com.crud.person.project.service.CSVService;
+import com.crud.person.project.csv.CSVService;
 import com.crud.person.project.service.PessoaService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletResponse;
+import utils.CPFValidation;
+import utils.NumberValidation;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +39,7 @@ public class PessoaControllerTest {
     void saveCpfNotExistsTest() {
         Pessoa pessoa = new Pessoa();
         pessoa.setId(1L);
-        pessoa.setCpf("123123123");
+        pessoa.setCpf("95550964066");
 
         when(pessoaService.findByCpf(pessoa.getCpf())).thenReturn(Optional.empty());
         when(pessoaService.save(any(Pessoa.class))).thenReturn(pessoa);
@@ -54,7 +54,7 @@ public class PessoaControllerTest {
     @Test
     void saveCpfExistsTest() {
         Pessoa pessoa = new Pessoa();
-        pessoa.setCpf("123123123");
+        pessoa.setCpf("95550964066");
 
         when(pessoaService.findByCpf(pessoa.getCpf())).thenReturn(Optional.of(pessoa));
 
@@ -72,12 +72,12 @@ public class PessoaControllerTest {
         Pessoa pessoa1 = new Pessoa();
         pessoa1.setId(1L);
         pessoa1.setNome("Sarah");
-        pessoa1.setCpf("123123123");
+        pessoa1.setCpf("95550964066");
 
         Pessoa pessoa2 = new Pessoa();
         pessoa2.setId(2L);
         pessoa2.setNome("Lucas");
-        pessoa2.setCpf("321321321");
+        pessoa2.setCpf("93570033040");
 
         List<Pessoa> pessoas = Arrays.asList(pessoa1, pessoa2);
 
@@ -96,7 +96,7 @@ public class PessoaControllerTest {
         Pessoa pessoa = new Pessoa();
         pessoa.setId(1L);
         pessoa.setNome("Sarah");
-        pessoa.setCpf("123123123");
+        pessoa.setCpf("95550964066");
 
         when(pessoaService.findById(pessoa.getId())).thenReturn(Optional.of(pessoa));
 
@@ -113,7 +113,7 @@ public class PessoaControllerTest {
         Pessoa pessoa = new Pessoa();
         pessoa.setId(1L);
         pessoa.setNome("Sarah");
-        pessoa.setCpf("123123123");
+        pessoa.setCpf("95550964066");
 
         when(pessoaService.findById(pessoa.getId())).thenReturn(Optional.empty());
 
@@ -129,12 +129,12 @@ public class PessoaControllerTest {
         Pessoa pessoa = new Pessoa();
         pessoa.setId(1L);
         pessoa.setNome("Sarah");
-        pessoa.setCpf("123123123");
+        pessoa.setCpf("95550964066");
         pessoa.setTelefone("41999999999");
 
         Pessoa pessoaEdited = new Pessoa();
         pessoaEdited.setNome("Sarah Camargo");
-        pessoaEdited.setCpf("321321321");
+        pessoaEdited.setCpf("93570033040");
         pessoaEdited.setTelefone("41988888888");
 
         when(pessoaService.findById(pessoa.getId())).thenReturn(Optional.of(pessoa));
@@ -154,7 +154,7 @@ public class PessoaControllerTest {
         final Long id = 99L;
         Pessoa pessoaEdited = new Pessoa();
         pessoaEdited.setNome("Sarah Camargo");
-        pessoaEdited.setCpf("321321321");
+        pessoaEdited.setCpf("95550964066");
         pessoaEdited.setTelefone("41988888888");
 
         when(pessoaService.findById(id)).thenReturn(Optional.empty());
@@ -192,32 +192,26 @@ public class PessoaControllerTest {
     }
 
     @Test
-    void getCSVTest() throws Exception {
-        MockitoAnnotations.openMocks(this);
-
-        doAnswer(invocation -> {
-            HttpServletResponse response = invocation.getArgument(0);
-
-            response.setContentType("text/csv");
-            response.setHeader("Content-Disposition", "attachment; filename=person-report.csv");
-
-            response.getWriter().write(getCsvString());
-
-            return null;
-        }).when(csvService).getCSV(any(HttpServletResponse.class), anyList());
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        pessoaController.getCSV(response);
-        assertEquals(getCsvString(), response.getContentAsString());
-        assertEquals("text/csv", response.getContentType());
-        assertEquals("attachment; filename=person-report.csv", response.getHeader("Content-Disposition"));
+    void saveCpfValid() {
+        assertDoesNotThrow(() -> CPFValidation.validaCpf("95550964066"));
     }
 
-    private String getCsvString() {
-        return "Id,Nome,Telefone,CPF,CEP,Logradouro,Bairro,Municipio,Estado,Numero,Complemento\n" +
-                "1,Sarah,41999999999,123123123,89012520,Rua Teste1,Victor Konder,Blumenau,SC,100,AP 200\n" +
-                "2,Lucas,41988888888,321321321,89012520,Rua Teste2,Victor Konder,Blumenau,SC,101,AP 201\n";
+    @Test
+    void saveCpfNotValid() {
+        String cpfInvalido = "123123";
+        assertThrows(ValidationException.class, () -> CPFValidation.validaCpf(cpfInvalido));
+    }
+
+    @Test
+    void saveNumberValid() {
+        assertDoesNotThrow(() -> NumberValidation.validateInteger("12"));
+        assertDoesNotThrow(() -> NumberValidation.validateInteger(""));
+        assertDoesNotThrow(() -> NumberValidation.validateInteger(null));
+    }
+
+    @Test
+    void saveNumberNotValid() {
+        assertThrows(ValidationException.class, () -> NumberValidation.validateInteger("teste"));
     }
 
 }

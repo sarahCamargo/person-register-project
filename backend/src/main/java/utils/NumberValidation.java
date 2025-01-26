@@ -6,7 +6,7 @@ public class NumberValidation {
 
     public static void validateInteger(String numero) {
         try {
-            if (!numero.isEmpty()) {
+            if (numero != null && !numero.isEmpty()) {
                 Integer.parseInt(numero);
             }
         } catch (NumberFormatException e) {
