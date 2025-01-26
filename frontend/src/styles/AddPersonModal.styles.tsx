@@ -1,5 +1,5 @@
 import { Box, Button, Grid2 } from "@mui/material";
-import { styled } from "@mui/system";
+import styled from "styled-components";
 
 export const StyledBox = styled(Box)`
   position: absolute;

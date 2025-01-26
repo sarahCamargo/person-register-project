@@ -1,5 +1,5 @@
 import { Button, Container, Table, TableCell, TablePagination, Grid2, Box } from '@mui/material';
-import { styled } from '@mui/system';
+import styled from 'styled-components';
 
 export const StyledContainer = styled(Container)`
   margin-top: 20px;
