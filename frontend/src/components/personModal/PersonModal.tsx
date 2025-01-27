@@ -1,107 +1,74 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Modal, TextField, Typography, Grid2 } from '@mui/material';
-import { Pessoa } from '../types/Pessoa';
-import { adicionarPessoa, editarPessoa } from '../services/PersonService';
-import { consultaCep } from '../services/CepService';
-import { Content, Footer, Header, StyledBox, StyledButton, StyledGrid } from '../styles/AddPersonModal.styles';
 import { toast } from 'react-toastify';
+import { adicionarPessoa, editarPessoa } from '../../services/personService';
+import { consultaCep } from '../../services/cepService';
+import { CloseButton, Content, Footer, Header, StyledBox, StyledButton, StyledGrid } from './personModal.styles';
+import { PersonModalProps } from './personModalProps.types';
+import usePersonForm from '../../hooks/usePersonForm';
+import { isNumber } from '../../utils/validateNumber';
+import CloseIcon from '@mui/icons-material/Close';
 
-interface AddPersonModalProps {
-  refreshList: () => void;
-  open: boolean;
-  onClose: () => void;
-  onAdd: (person: Pessoa) => Promise<void>;
-  onEdit: (person: Pessoa) => Promise<void>;
-  personToEdit?: Pessoa;
-}
-
-const AddPersonModal: React.FC<AddPersonModalProps> = ({
+const PersonModal: React.FC<PersonModalProps> = ({
   open,
   onClose,
   refreshList,
   personToEdit,
 }) => {
-  const [nome, setNome] = useState('');
-  const [telefone, setTelefone] = useState('');
-  const [cpf, setCpf] = useState('');
-  const [cep, setCep] = useState('');
-  const [logradouro, setLogradouro] = useState('');
-  const [municipio, setMunicipio] = useState('');
-  const [estado, setEstado] = useState('');
-  const [bairro, setBairro] = useState('');
-  const [numero, setNumero] = useState('');
-  const [complemento, setComplemento] = useState('');
+  const {
+    nome, setNome,
+    telefone, setTelefone,
+    cpf, setCpf,
+    cep, setCep,
+    logradouro, setLogradouro,
+    municipio, setMunicipio,
+    estado, setEstado,
+    bairro, setBairro,
+    numero, setNumero,
+    complemento, setComplemento,
+    erros,
+    resetForm,
+    isFieldsValid,
+  } = usePersonForm(personToEdit);
+
   const [isLoading, setIsLoading] = useState(false);
 
-  const [erros, setErros] = useState({
-    nome: false,
-    cpf: false,
-  });
+  const obterEndereco = useCallback(async (cep: string) => {
+    if (cep.length === 8) {
+      setIsLoading(true);
+      try {
+        await consultaCep(cep).then(response => {
+          if (response && response.data) {
+            const endereco = response.data;
+            setMunicipio(endereco.localidade);
+            setEstado(endereco.uf);
+            setLogradouro(endereco.logradouro);
+            setBairro(endereco.bairro);
+          }
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }, [setMunicipio, setEstado, setLogradouro, setBairro]);
 
   useEffect(() => {
     if (cep.length === 8) {
       obterEndereco(cep);
     }
-  }, [cep]);
-
-  useEffect(() => {
-    if (personToEdit) {
-      setNome(personToEdit.nome);
-      setTelefone(personToEdit.telefone);
-      setCpf(personToEdit.cpf);
-      setCep(personToEdit.cep);
-      setLogradouro(personToEdit.logradouro);
-      setMunicipio(personToEdit.municipio);
-      setEstado(personToEdit.estado);
-      setBairro(personToEdit.bairro);
-      setNumero(personToEdit.numero);
-      setComplemento(personToEdit.complemento);
-    } else {
-      setNome('');
-      setTelefone('');
-      setCpf('');
-      setCep('');
-      setLogradouro('');
-      setMunicipio('');
-      setEstado('');
-      setBairro('');
-      setNumero('');
-      setComplemento('');
-    }
-  }, [personToEdit]);
+  }, [cep, obterEndereco]);
 
   const handleClose = () => {
-    setNome('');
-    setTelefone('');
-    setCpf('');
-    setCep('');
-    setLogradouro('');
-    setMunicipio('');
-    setEstado('');
-    setBairro('');
-    setNumero('');
-    setComplemento('');
+    resetForm();
     onClose();
   };
 
 
   const handleSave = async () => {
 
-    if (!isFieldsValid(nome, cpf)) return;
+    if (!isFieldsValid()) return;
 
-    const newPerson: Pessoa = {
-      id: personToEdit ? personToEdit.id : '',
-      nome: nome,
-      telefone: telefone,
-      cpf: cpf,
-      cep: cep,
-      logradouro: logradouro,
-      municipio: municipio,
-      estado: estado,
-      bairro: bairro,
-      numero: numero,
-      complemento: complemento
-    };
+    const newPerson = { nome, telefone, cpf, cep, logradouro, municipio, estado, bairro, numero, complemento };
 
     setIsLoading(true);
 
@@ -122,40 +89,6 @@ const AddPersonModal: React.FC<AddPersonModalProps> = ({
     }
   };
 
-  const isFieldsValid = (nome: string, cpf: string): boolean => {
-    let valid = true;
-    const erros = {
-      nome: !nome,
-      cpf: !cpf,
-    };
-
-    if (erros.nome || erros.cpf) {
-      setErros(erros);
-      valid = false;
-    }
-
-    return valid;
-  }
-
-  const obterEndereco = async (cep: string) => {
-    if (cep.length === 8) {
-      setIsLoading(true);
-      try {
-        await consultaCep(cep).then(response => {
-          if (response && response.data) {
-            const endereco = response.data;
-            setMunicipio(endereco.localidade);
-            setEstado(endereco.uf);
-            setLogradouro(endereco.logradouro);
-            setBairro(endereco.bairro);
-          }
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
   return (
     <Modal open={open} onClose={handleClose}>
       <StyledBox>
@@ -163,6 +96,9 @@ const AddPersonModal: React.FC<AddPersonModalProps> = ({
           <Typography variant="h6" gutterBottom>
             {personToEdit ? 'Editar Pessoa' : 'Adicionar Pessoa'}
           </Typography>
+          <CloseButton onClick={handleClose}>
+            <CloseIcon></CloseIcon>
+          </CloseButton>
         </Header>
         <Content>
           <TextField
@@ -182,7 +118,7 @@ const AddPersonModal: React.FC<AddPersonModalProps> = ({
             value={telefone}
             onChange={(e) => {
               const value = e.target.value;
-              if (/^\d*$/.test(value)) {
+              if (isNumber(value)) {
                 setTelefone(e.target.value)
               }
             }}
@@ -195,7 +131,7 @@ const AddPersonModal: React.FC<AddPersonModalProps> = ({
             value={cpf}
             onChange={(e) => {
               const value = e.target.value;
-              if (/^\d*$/.test(value)) {
+              if (isNumber(value)) {
                 setCpf(e.target.value)
               }
             }}
@@ -212,7 +148,7 @@ const AddPersonModal: React.FC<AddPersonModalProps> = ({
                 value={cep}
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (/^\d*$/.test(value)) {
+                  if (isNumber(value)) {
                     setCep(e.target.value)
                   }
                 }}
@@ -269,7 +205,7 @@ const AddPersonModal: React.FC<AddPersonModalProps> = ({
                 value={numero}
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (/^\d*$/.test(value)) {
+                  if (isNumber(value)) {
                     setNumero(value);
                   }
                 }}
@@ -305,4 +241,4 @@ const AddPersonModal: React.FC<AddPersonModalProps> = ({
   );
 };
 
-export default AddPersonModal;
+export default PersonModal;

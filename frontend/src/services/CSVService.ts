@@ -1,13 +1,10 @@
-import axios from 'axios';
 import { toast } from 'react-toastify';
-
-const api = axios.create({
-    baseURL: 'http://localhost:8080/api/csv'
-});
+import { api } from './api';
+import { API_ENDPOINT_CSV } from '../utils';
 
 export const gerarCSV = async () => {
     try {
-        const response = await api.get('/download')
+        const response = await api.get(`${API_ENDPOINT_CSV}/download`)
         if (response.data) {
             toast.info(response.data);
         }

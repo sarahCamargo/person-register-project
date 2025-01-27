@@ -1,13 +1,10 @@
-import axios from 'axios';
 import { toast } from 'react-toastify';
-
-const api = axios.create({
-    baseURL: 'http://localhost:8080/api/pessoa'
-});
+import { api } from './api';
+import { API_ENDPOINT_PESSOAS } from '../utils';
 
 export const listarPessoas = async () => {
     try {
-        const response = await api.get('/');
+        const response = await api.get(`${API_ENDPOINT_PESSOAS}/`);
         return response.data;
     } catch (error: any) {
         toast.error('Erro ao listar pessoas', error);
@@ -16,7 +13,7 @@ export const listarPessoas = async () => {
 
 export const adicionarPessoa = async (pessoa: any) => {
     try {
-        const response = await api.post('/', pessoa);
+        const response = await api.post(`${API_ENDPOINT_PESSOAS}/`, pessoa);
         return response.data;
     } catch (error: any) {
         if (error.response && error.response.data) {
@@ -29,7 +26,7 @@ export const adicionarPessoa = async (pessoa: any) => {
 
 export const editarPessoa = async (pessoa: any) => {
     try {
-        const response = await api.put(`/${pessoa.id}`, pessoa);
+        const response = await api.put(`${API_ENDPOINT_PESSOAS}/${pessoa.id}`, pessoa);
         return response.data;
     } catch (error: any) {
         if (error.response && error.response.data) {
@@ -42,7 +39,7 @@ export const editarPessoa = async (pessoa: any) => {
 
 export const removerPessoa = async (id: string) => {
     try {
-        await api.delete(`/${id}`);
+        await api.delete(`${API_ENDPOINT_PESSOAS}/${id}`);
     } catch (error: any) {
         throw error('Erro ao remover pessoa:', error);
     }

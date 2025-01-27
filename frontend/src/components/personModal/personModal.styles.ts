@@ -1,4 +1,4 @@
-import { Box, Button, Grid2 } from "@mui/material";
+import { Box, Button, Grid2, IconButton } from "@mui/material";
 import styled from "styled-components";
 
 export const StyledBox = styled(Box)`
@@ -16,19 +16,9 @@ export const StyledBox = styled(Box)`
   width: 90%;
   max-width: 800px;
   max-height: 90vh;
-  overflow-y: auto;
-  padding-right: 10px;
 
-  @media (min-width: 600px) {
-    width: 80%;
-  }
-
-  @media (min-width: 960px) {
-    width: 60%;
-  }
-
-  @media (min-width: 1280px) {
-    width: 50%;
+  ${({ theme }) => theme.breakpoints.down('lg')} {
+    width: 85%;
   }
 `;
 
@@ -38,19 +28,25 @@ export const Header = styled(Box)`
   text-align: center;
   margin-bottom: 16px;
   width: 100%;
+  position: relative;
+`;
+
+export const CloseButton = styled(IconButton)`
+  position: absolute !important;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
 `;
 
 
 export const Content = styled(Box)`
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 16px;
 `;
 
 export const Footer = styled(Box)`
   text-align: center;
   margin-top: 16px;
-  padding-top: 8px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -59,11 +55,10 @@ export const Footer = styled(Box)`
 
 export const StyledButton = styled(Button)`
   width: 100%;
-  display: flex;
 `;
 
 export const StyledGrid = styled(Grid2)`
-  @media (max-width: 600px) {
-    gap:0;
+  ${({ theme }) => theme.breakpoints.down('sm')} {
+    gap:0 !important;
   }
 `;

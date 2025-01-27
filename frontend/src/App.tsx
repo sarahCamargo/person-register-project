@@ -1,13 +1,15 @@
 import React from 'react';
-import PersonList from './containers/PersonList';
 import { ToastContainer } from 'react-toastify';
+import PersonPage from './pages/PersonPage';
+import { ThemeProvider } from 'styled-components';
+import theme from './styles/theme';
 
 function App() {
   return (
-    <div>
-      <PersonList />
+    <ThemeProvider theme={theme}>
+      <PersonPage />
       <ToastContainer />
-    </div>
+    </ThemeProvider>
   );
 }
 
