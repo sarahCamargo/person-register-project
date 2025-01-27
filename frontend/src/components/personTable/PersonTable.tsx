@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { IconButton, Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -9,6 +9,14 @@ import Pagination from '../pagination/Pagination';
 
 const PersonTable: React.FC<PersonTableProps> = ({ pessoas, onEdit, onDelete }) => {
   const [displayedPessoas, setDisplayedPessoas] = useState<Pessoa[]>([]);
+
+  const handlePageChange = useCallback(
+    (updatedDisplayedPessoas: Pessoa[]) => {
+      setDisplayedPessoas(updatedDisplayedPessoas);
+    },
+    []
+  );
+
   return (
     <StyledBox>
       <StyledTable stickyHeader>
@@ -66,7 +74,7 @@ const PersonTable: React.FC<PersonTableProps> = ({ pessoas, onEdit, onDelete }) 
           <tr>
             <Pagination
               dados={pessoas}
-              onPageChange={(updatedDisplayedPessoas: Pessoa[]) => setDisplayedPessoas(updatedDisplayedPessoas)}
+              onPageChange={handlePageChange}
             />
           </tr>
         </tbody>
