@@ -22,7 +22,13 @@ Aplicação CRUD para gerenciamento de registros de pessoas, bem como geração 
     * [Acessando a aplicação](#acessando-a-aplicação)
     * [Rodando o Backend Separadamente (opcional)](#rodando-o-backend-separadamente-opcional)
     * [Rodando o Frontend Separadamente (opcional)](#rodando-o-frontend-separadamente-opcional)
-* [Testando a Aplicação](#testando-a-aplicação)
+  * [Subindo o ambiente com npm e maven](#subindo-o-ambiente-com-npm-e-maven)
+    * [Pré-requisitos](#pré-requisitos-1)
+    * [Configurando o Ambiente](#configurando-o-ambiente)
+    * [Subindo o Projeto Frontend](#subindo-o-projeto-frontend)
+    * [Subindo o Projeto Backend](#subindo-o-projeto-backend)
+    * [Acessando a aplicação](#acessando-a-aplicação-1)
+* [Testando a Aplicação com JUnit](#testando-a-aplicação-com-junit)
 
 # Funcionalidades
 
@@ -58,15 +64,20 @@ Cada pasta possui seu próprio Dockerfile para criação de containers separados
 
 ### Configurando o Docker
 
-Atualize as configurações no arquivo docker-compose.yml na raiz do projeto conforme necessário.
+Atualize as configurações no arquivo [docker-compose.yml](https://github.com/sarahCamargo/person-register-project/blob/main/docker-compose.yml) na raiz do projeto conforme necessário.
 
+Configurações Postgres
 - SPRING_DATASOURCE_URL=jdbc:postgresql://{usuario_postgres}:{porta}/persondb
 - SPRING_DATASOURCE_USERNAME={usuario_postgres}
 - SPRING_DATASOURCE_PASSWORD={senha}
+
+Configurações RabbitMQ
 - SPRING_RABBITMQ_HOST=rabbitmq
 - SPRING_RABBITMQ_PORT=5672
 - SPRING_RABBITMQ_USERNAME=guest
 - SPRING_RABBITMQ_PASSWORD=guest
+
+Configurações Diretório e Arquivo CSV
 - CSV_OUTPUT_DIRECTORY={output_geracao_arquivo_csv}
 - CSV_OUTPUT_FILENAME={nome_arquivo_csv}
 
@@ -101,6 +112,22 @@ docker run -d --name backend -p 8080:8080 scdecamargo/person-register-project/fr
 
 ### Configurando o Ambiente
 
+No arquivo [application.properties](https://github.com/sarahCamargo/person-register-project/blob/main/backend/src/main/resources/application.properties) configure as seguintes propriedades conforme necessário:
+
+Configurações RabbitMQ
+- spring.rabbitmq.host=localhost
+- spring.rabbitmq.port=5672
+- spring.rabbitmq.username=guest
+- spring.rabbitmq.password=guest
+
+Configurações Postgres
+- spring.datasource.url=jdbc:postgresql://localhost:5432/persondb?createDatabaseIfNotExists=true
+- spring.datasource.username=postgres
+- spring.datasource.password=admin
+
+Configurações Diretório e Arquivo CSV
+- csv.output.directory=${CSV_OUTPUT_DIRECTORY:output}
+- csv.output.filename=${CSV_OUTPUT_FILENAME:person-report.csv}
 
 ### Subindo o Projeto Frontend
 ```bash
