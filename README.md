@@ -108,6 +108,7 @@ docker run -d --name backend -p 8080:8080 scdecamargo/person-register-project/fr
 - [npm](https://www.npmjs.com/)
 - [Java JDK 17](https://www.oracle.com/java/technologies/downloads/#java17?er=221886)
 - [PostgreSQL](https://www.postgresql.org/)
+- [Erlang](https://www.erlang.org/downloads)
 - [RabbitMQ](https://www.rabbitmq.com/)
 
 ### Configurando o Ambiente
