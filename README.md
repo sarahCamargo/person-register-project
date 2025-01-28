@@ -35,6 +35,14 @@ Aplicação CRUD para gerenciamento de registros de pessoas, bem como geração 
 
 - `Gerenciamento de pessoas`: Adição, edição, remoção e listagem de pessoas físicas.
 - `Geração de arquivo CSV`: Geração de arquivo CSV contendo todos os dados das pessoas cadastradas.]
+- `Auditoria de Requisições`: Registro de requisições para auditoria posterior.
+
+# Auditoria de Requisições
+
+Para visualizar os registros salvos para auditoria é necessário verificar os registros na tabela `auditoria`:
+```bash
+select * from auditoria;
+```
 
 # Estrutura do Repositório
 
@@ -59,7 +67,6 @@ cd person-register-project
 ### Pré-requisitos
 
 - [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
   
 Cada pasta possui seu próprio Dockerfile para criação de containers separados para frontend e backend.
 
@@ -164,11 +171,12 @@ cd backend
 
 <p> Porém, é possível adicionar incrementar o projeto com diversas melhorias futuras, afim de deixar a interface mais amigável ao usuário e documentação da API.</p>
 
-- Para <b>documentação da API</b>, a proposta seria utilizar o [Swagger](https://swagger.io/) para tal funcionalidade, visando simplificar a utilização da API.
-- Para a <b>interface gráfica do projeto</b>, seria interessante utilizar a API para aplicar filtros na tabela e paginação, pensando em um cenário com grande volume de dados, além da <b>ordenação</b> dos campos.
-- Ainda para a interface gráfica, adicionar <b>carregamentos com spinners ou placeholders</b> enquanto o backend carrega a requisição, para melhor feeback visual.
-- No modal de adição e edição, seria interessate para o usuário que alguns campos possuíssem <b>máscara para visualização</b>.
-- Em um cenário no qual vários usuários acessam o sistema, o ideal seria utilizar a <b>autenticação dos usuários</b>, visando um ambiente mais seguros utilizando <b>Spring Security e JWT</b>.
-
+- Para `documentação` da API, a proposta seria utilizar o [Swagger](https://swagger.io/) para tal funcionalidade, visando simplificar a utilização da API.
+- Para a `interface gráfica` do projeto, seria interessante utilizar o `Pageable do Spring Data JPA` para aplicar `filtros` na tabela, `paginação` e `ordenação` de campos, pensando em um cenário com grande volume de dados.
+- Ainda para a interface gráfica, adicionar `carregamentos com spinners ou placeholders` enquanto o backend carrega a requisição, para melhor feeback visual.
+- No modal de adição e edição, seria interessate para o usuário que alguns campos possuíssem `máscara para visualização`.
+- Em um cenário no qual vários usuários acessam o sistema, o ideal seria utilizar a `autenticação dos usuários`, visando um ambiente mais seguros utilizando `Spring Security e JWT`.
+- Para a `auditoria`, seria interessante permitir que usuários administradores visualizassem os registros em uma interface gráfica.
+  
 <p> Essas e outras melhorias, podem ser incrementadas no projeto futuramente.</p>
 <p> Além disso, sinta-se a vontade para enviar feedbacks positivos e negativos para a aplicação.</p>
