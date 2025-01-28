@@ -17,7 +17,7 @@ FROM openjdk:17-slim
 
 WORKDIR /app
 
-COPY --from=build /app/target/backend-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/backend-1.0.jar app.jar
 
 EXPOSE 8080
 
