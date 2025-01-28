@@ -164,10 +164,11 @@ cd backend
 
 <p> Porém, é possível adicionar incrementar o projeto com diversas melhorias futuras, afim de deixar a interface mais amigável ao usuário e documentação da API.</p>
 
-- Para documentação da API, a proposta seria utilizar o [Swagger](https://swagger.io/) para tal funcionalidade, visando simplificar a utilização da API.
-- Para a interface gráfica do projeto, seria interessante utilizar a API para aplicar filtros na tabela e paginação, pensando em um cenário com grande volume de dados.
-- No modal de adição e edição, seria interessate para o usuário que alguns campos possuíssem máscara para visualização.
-- Em um cenário no qual vários usuários acessam o sistema, o ideal seria utilizar a autenticação dos usuários, visando um ambiente mais seguros.
+- Para <b>documentação da API</b>, a proposta seria utilizar o [Swagger](https://swagger.io/) para tal funcionalidade, visando simplificar a utilização da API.
+- Para a <b>interface gráfica do projeto</b>, seria interessante utilizar a API para aplicar filtros na tabela e paginação, pensando em um cenário com grande volume de dados, além da <b>ordenação</b> dos campos.
+- Ainda para a interface gráfica, adicionar <b>carregamentos com spinners ou placeholders</b> enquanto o backend carrega a requisição, para melhor feeback visual.
+- No modal de adição e edição, seria interessate para o usuário que alguns campos possuíssem <b>máscara para visualização</b>.
+- Em um cenário no qual vários usuários acessam o sistema, o ideal seria utilizar a <b>autenticação dos usuários</b>, visando um ambiente mais seguros utilizando <b>Spring Security e JWT</b>.
 
 <p> Essas e outras melhorias, podem ser incrementadas no projeto futuramente.</p>
 <p> Além disso, sinta-se a vontade para enviar feedbacks positivos e negativos para a aplicação.</p>
