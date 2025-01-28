@@ -33,3 +33,16 @@ export const ButtonGrid = styled(Grid2)`
     gap: 5px !important;
   }
 `;
+
+export const StyledFilter = styled(Grid2)`
+  display:flex;
+  flex-wrap: wrap;
+  gap: 5px !important;
+
+  ${({ theme }) => theme.breakpoints.down('sm')} {
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width:100%;
+  }
+`;

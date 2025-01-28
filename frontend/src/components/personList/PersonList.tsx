@@ -5,18 +5,20 @@ import {
   editarPessoa,
   removerPessoa,
 } from '../../services/personService';
-import { Grid2 } from '@mui/material';
+import { Grid2, MenuItem, TextField } from '@mui/material';
 import { gerarCSV } from '../../services/csvService';
 import { toast } from 'react-toastify';
 import AddPersonModal from '../personModal/PersonModal';
 import { Pessoa } from '../../types/pessoa';
-import { ButtonGrid, StyledButton } from './personList.styles';
+import { ButtonGrid, StyledButton, StyledFilter } from './personList.styles';
 import PersonTable from '../personTable/PersonTable';
 
 const PeopleList: React.FC = () => {
   const [pessoas, setPessoas] = useState<Pessoa[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [personToEdit, setPersonToEdit] = useState<Pessoa | undefined>();
+  const [filtro, setFiltro] = useState('nome');
+  const [termoBusca, setTermoBusca] = useState('');
 
   const fetchPessoas = async () => {
     const data = await listarPessoas();
@@ -61,6 +63,16 @@ const PeopleList: React.FC = () => {
     await gerarCSV();
   };
 
+  const pessoasFiltradas = pessoas?.filter((pessoa) => {
+    if (filtro === 'nome') {
+      return pessoa.nome.toLowerCase().includes(termoBusca.toLowerCase());
+    }
+    if (filtro === 'cpf') {
+      return pessoa.cpf.includes(termoBusca);
+    }
+    return true;
+  });
+
   return (
     <>
       <ButtonGrid container spacing={2} justifyContent="flex-start" alignItems="center">
@@ -74,6 +86,28 @@ const PeopleList: React.FC = () => {
             Gerar Arquivo CSV
           </StyledButton>
         </Grid2>
+        <StyledFilter>
+          <Grid2>
+            <TextField
+              select
+              label="Filtrar por"
+              value={filtro}
+              onChange={(e) => setFiltro(e.target.value)}
+              fullWidth
+            >
+              <MenuItem value="nome">Nome</MenuItem>
+              <MenuItem value="cpf">CPF</MenuItem>
+            </TextField>
+          </Grid2>
+          <Grid2>
+            <TextField
+              label="Buscar"
+              value={termoBusca}
+              onChange={(e) => setTermoBusca(e.target.value)}
+              fullWidth
+            />
+          </Grid2>
+        </StyledFilter>
       </ButtonGrid>
 
       <AddPersonModal
@@ -86,7 +120,7 @@ const PeopleList: React.FC = () => {
       />
 
       <PersonTable
-        pessoas={pessoas}
+        pessoas={pessoasFiltradas}
         onEdit={handleOpenEditModal}
         onDelete={handleDeletePessoa}
       />
