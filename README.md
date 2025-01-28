@@ -29,6 +29,7 @@ Aplicação CRUD para gerenciamento de registros de pessoas, bem como geração 
     * [Subindo o Projeto Backend](#subindo-o-projeto-backend)
     * [Acessando a aplicação](#acessando-a-aplicação-1)
 * [Testando a Aplicação com JUnit](#testando-a-aplicação-com-junit)
+* [Pontos de Melhoria do Projeto](#pontos-de-melhoria-do-projeto)
 
 # Funcionalidades
 
@@ -61,6 +62,8 @@ cd person-register-project
 - [Docker Compose](https://docs.docker.com/compose/install/)
   
 Cada pasta possui seu próprio Dockerfile para criação de containers separados para frontend e backend.
+
+- [Docker Hub](https://hub.docker.com/r/scdecamargo/person-register-project/tags)
 
 ### Configurando o Docker
 
@@ -153,3 +156,18 @@ cd backend
 ```bash
 ./mvnw test
 ```
+
+# Pontos de Melhoria do Projeto
+
+<p> A primeira versão do projeto conta com uma API completa de registros de pessoas (adição, edição, remoção e listagem). </p>
+<p> Bem como possui uma interface gráfica para o usuário.</p>
+
+<p> Porém, é possível adicionar incrementar o projeto com diversas melhorias futuras, afim de deixar a interface mais amigável ao usuário e documentação da API.</p>
+
+- Para documentação da API, a proposta seria utilizar o [Swagger](https://swagger.io/) para tal funcionalidade, visando simplificar a utilização da API.
+- Para a interface gráfica do projeto, seria interessante utilizar a API para aplicar filtros na tabela e paginação, pensando em um cenário com grande volume de dados.
+- No modal de adição e edição, seria interessate para o usuário que alguns campos possuíssem máscara para visualização.
+- Em um cenário no qual vários usuários acessam o sistema, o ideal seria utilizar a autenticação dos usuários, visando um ambiente mais seguros.
+
+<p> Essas e outras melhorias, podem ser incrementadas no projeto futuramente.</p>
+<p> Além disso, sinta-se a vontade para enviar feedbacks positivos e negativos para a aplicação.</p>
