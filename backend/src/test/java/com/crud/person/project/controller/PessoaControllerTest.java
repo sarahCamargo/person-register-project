@@ -1,18 +1,24 @@
 package com.crud.person.project.controller;
 
 import com.crud.person.project.exception.CpfAlreadyRegisteredException;
+import com.crud.person.project.exception.GlobalExceptionHandler;
 import com.crud.person.project.exception.ValidationException;
 import com.crud.person.project.model.Pessoa;
 import com.crud.person.project.service.PessoaService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import com.crud.person.project.utils.CPFValidation;
 import com.crud.person.project.utils.NumberValidation;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,9 +30,14 @@ import static com.crud.person.project.exception.ValidationException.CPF_INVALID_
 import static com.crud.person.project.exception.ValidationException.NUMBER_INVALID_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 public class PessoaControllerTest {
+
+    private MockMvc mockMvc;
 
     @Mock
     private PessoaService pessoaService;
@@ -34,8 +45,17 @@ public class PessoaControllerTest {
     @InjectMocks
     private PessoaController pessoaController;
 
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(pessoaController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
+    }
+
+    private static final String URI = "/api/pessoa/";
+
     @Test
-    void saveCpfNotExistsTest() {
+    void saveCpfNotExistsTest() throws Exception {
         Pessoa pessoa = new Pessoa();
         pessoa.setId(1L);
         pessoa.setCpf("95550964066");
@@ -43,31 +63,36 @@ public class PessoaControllerTest {
         when(pessoaService.findByCpf(pessoa.getCpf())).thenReturn(Optional.empty());
         when(pessoaService.save(any(Pessoa.class))).thenReturn(pessoa);
 
-        Pessoa savedPessoa = pessoaController.save(pessoa);
+        String json = this.getPersonAsJson(pessoa);
 
-        assertNotNull(savedPessoa);
-        verify(pessoaService, times(1)).save(pessoa);
-
+        mockMvc.perform(post(URI)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().json(json));
     }
 
     @Test
-    void saveCpfExistsTest() {
+    void saveCpfExistsTest() throws Exception {
         Pessoa pessoa = new Pessoa();
         pessoa.setCpf("95550964066");
 
         when(pessoaService.findByCpf(pessoa.getCpf())).thenReturn(Optional.of(pessoa));
 
-        CpfAlreadyRegisteredException exception = assertThrows(
-                CpfAlreadyRegisteredException.class,
-                () -> pessoaController.save(pessoa)
-        );
+        String json = this.getPersonAsJson(pessoa);
 
-        assertEquals(CPF_ALREADY_REGISTERED_MESSAGE, exception.getMessage());
-        verify(pessoaService, never()).save(any(Pessoa.class));
+        mockMvc.perform(post(URI)
+                        .content(json)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isConflict())
+                .andExpect(result -> assertInstanceOf(CpfAlreadyRegisteredException.class, result.getResolvedException()))
+                .andExpect(result -> assertEquals(CPF_ALREADY_REGISTERED_MESSAGE, Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
     @Test
-    void findAllTest() {
+    void findAllTest() throws Exception {
         Pessoa pessoa1 = new Pessoa();
         pessoa1.setId(1L);
         pessoa1.setNome("Sarah");
@@ -80,114 +105,121 @@ public class PessoaControllerTest {
 
         List<Pessoa> pessoas = Arrays.asList(pessoa1, pessoa2);
 
+        String json = this.getPersonAsJson(pessoas);
+
         when(pessoaService.findAll()).thenReturn(pessoas);
 
-        List<Pessoa> retornoPessoas = pessoaController.findAll();
+        mockMvc.perform(get(URI))
+                .andExpect(status().isOk())
+                .andExpect(content().json(json));
 
-        assertNotNull(retornoPessoas);
-        assertEquals(pessoas.size(), retornoPessoas.size());
-        assertEquals(pessoas, retornoPessoas);
         verify(pessoaService, times(1)).findAll();
     }
 
     @Test
-    void findByIdWhenFoundTest() {
+    void findByIdWhenFoundTest() throws Exception {
         Pessoa pessoa = new Pessoa();
         pessoa.setId(1L);
         pessoa.setNome("Sarah");
         pessoa.setCpf("95550964066");
 
-        when(pessoaService.findById(pessoa.getId())).thenReturn(Optional.of(pessoa));
+        when(pessoaService.findById(1L)).thenReturn(Optional.of(pessoa));
 
-        ResponseEntity<Pessoa> response = pessoaController.findById(pessoa.getId());
+        String json = this.getPersonAsJson(pessoa);
 
-        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
-        assertTrue(response.hasBody());
-        assertEquals(pessoa, response.getBody());
+        mockMvc.perform(get(URI + pessoa.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().json(json));
+
         verify(pessoaService, times(1)).findById(pessoa.getId());
     }
 
     @Test
-    void findByIdWhenNotFoundTest() {
-        Pessoa pessoa = new Pessoa();
-        pessoa.setId(1L);
-        pessoa.setNome("Sarah");
-        pessoa.setCpf("95550964066");
+    void findByIdWhenNotFoundTest() throws Exception {
+        when(pessoaService.findById(anyLong())).thenReturn(Optional.empty());
 
-        when(pessoaService.findById(pessoa.getId())).thenReturn(Optional.empty());
+        mockMvc.perform(get(URI + anyLong()))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(""));
 
-        ResponseEntity<Pessoa> response = pessoaController.findById(pessoa.getId());
-
-        assertEquals(HttpStatusCode.valueOf(404), response.getStatusCode());
-        assertFalse(response.hasBody());
-        verify(pessoaService, times(1)).findById(pessoa.getId());
+        verify(pessoaService, times(1)).findById(anyLong());
     }
 
     @Test
-    void updateWhenPersonExistsTest() {
-        Pessoa pessoa = new Pessoa();
-        pessoa.setId(1L);
-        pessoa.setNome("Sarah");
-        pessoa.setCpf("95550964066");
-        pessoa.setTelefone("41999999999");
+    void updateWhenPersonExistsTest() throws Exception {
+        Pessoa pessoaAntiga = new Pessoa();
+        pessoaAntiga.setId(1L);
+        pessoaAntiga.setNome("Sarah");
+        pessoaAntiga.setCpf("95550964066");
+        pessoaAntiga.setTelefone("41999999999");
 
-        Pessoa pessoaEdited = new Pessoa();
-        pessoaEdited.setNome("Sarah Camargo");
-        pessoaEdited.setCpf("93570033040");
-        pessoaEdited.setTelefone("41988888888");
+        Pessoa pessoaEditada = new Pessoa();
+        pessoaEditada.setId(1L);
+        pessoaEditada.setNome("Sarah Camargo");
+        pessoaEditada.setCpf("93570033040");
+        pessoaEditada.setTelefone("41988888888");
 
-        when(pessoaService.findById(pessoa.getId())).thenReturn(Optional.of(pessoa));
-        when(pessoaService.save(any(Pessoa.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(pessoaService.findById(pessoaAntiga.getId())).thenReturn(Optional.of(pessoaAntiga));
+        when(pessoaService.save(any(Pessoa.class))).thenReturn(pessoaEditada);
 
-        ResponseEntity<Pessoa> response = pessoaController.update(pessoa.getId(), pessoaEdited);
+        String jsonPessoaAntiga = this.getPersonAsJson(pessoaAntiga);
+        String jsonPessoaNova = this.getPersonAsJson(pessoaEditada);
 
-        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
-        assertEquals(pessoaEdited.getNome(), Objects.requireNonNull(response.getBody()).getNome());
-        assertEquals(pessoaEdited.getTelefone(), response.getBody().getTelefone());
-        verify(pessoaService, times(1)).findById(pessoa.getId());
+        mockMvc.perform(put(URI + 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonPessoaAntiga)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().json(jsonPessoaNova));
+
+        verify(pessoaService, times(1)).findById(anyLong());
         verify(pessoaService, times(1)).save(any(Pessoa.class));
     }
 
     @Test
-    void updateWhenPersonNotExistsTest() {
-        final Long id = 99L;
-        Pessoa pessoaEdited = new Pessoa();
-        pessoaEdited.setNome("Sarah Camargo");
-        pessoaEdited.setCpf("95550964066");
-        pessoaEdited.setTelefone("41988888888");
+    void updateWhenPersonNotExistsTest() throws Exception {
+        Pessoa pessoaAntiga = new Pessoa();
+        pessoaAntiga.setNome("Sarah Camargo");
+        pessoaAntiga.setCpf("95550964066");
+        pessoaAntiga.setTelefone("41988888888");
 
-        when(pessoaService.findById(id)).thenReturn(Optional.empty());
+        when(pessoaService.findById(anyLong())).thenReturn(Optional.empty());
 
-        ResponseEntity<Pessoa> response = pessoaController.update(id, pessoaEdited);
+        String jsonPessoaAntiga = this.getPersonAsJson(pessoaAntiga);
 
-        assertEquals(HttpStatusCode.valueOf(404), response.getStatusCode());
-        verify(pessoaService, times(1)).findById(id);
+        mockMvc.perform(put(URI + anyLong())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonPessoaAntiga)
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(""));
+
+        verify(pessoaService, times(1)).findById(anyLong());
         verify(pessoaService, never()).save(any(Pessoa.class));
     }
 
 
     @Test
-    void deleteWhenPersonExistsTest() {
+    void deleteWhenPersonExistsTest() throws Exception {
         Pessoa pessoa = new Pessoa();
         pessoa.setId(1L);
         pessoa.setNome("Sarah");
 
         when(pessoaService.findById(pessoa.getId())).thenReturn(Optional.of(pessoa));
 
-        ResponseEntity<Void> response = pessoaController.delete(pessoa.getId());
+        mockMvc.perform(delete(URI + pessoa.getId()))
+                .andExpect(status().isNoContent())
+                .andExpect(content().string(""));
 
-        assertEquals(HttpStatusCode.valueOf(204), response.getStatusCode());
         verify(pessoaService, times(1)).deleteById(pessoa.getId());
     }
 
     @Test
-    void deleteWhenPersonNotExistsTest() {
-        Long id = 99L;
+    void deleteWhenPersonNotExistsTest() throws Exception {
+        mockMvc.perform(delete(URI + anyLong()))
+                .andExpect(status().isNotFound());
 
-        ResponseEntity<Void> response = pessoaController.delete(id);
-
-        assertEquals(HttpStatusCode.valueOf(404), response.getStatusCode());
-        verify(pessoaService, never()).deleteById(id);
+        verify(pessoaService, never()).deleteById(anyLong());
     }
 
     @Test
@@ -220,6 +252,11 @@ public class PessoaControllerTest {
         );
 
         assertEquals(NUMBER_INVALID_MESSAGE, exception.getMessage());
+    }
+
+    private String getPersonAsJson(Object pessoa) throws JsonProcessingException {
+        ObjectWriter objectMapper = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        return objectMapper.writeValueAsString(pessoa);
     }
 
 }
